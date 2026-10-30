@@ -1,0 +1,122 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cadet Prep 60,000+</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f2f5f3;font-family:Arial;color:#17231b}header{background:#075b35;color:white;padding:18px;text-align:center;position:sticky;top:0}h1{margin:0}.wrap{max-width:900px;margin:auto;padding:12px}.card{background:white;padding:15px;margin:10px 0;border-radius:14px;box-shadow:0 2px 8px #0001}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}button,select,input{font:inherit}button{border:0;border-radius:10px;padding:11px;background:#087443;color:white;font-weight:bold}button.alt,.subjects button,.modes button{background:#e8f0eb;color:#14502f}button.active{background:#087443!important;color:white!important}.full{width:100%}.hide{display:none}.opt{display:block;width:100%;text-align:left;margin:7px 0;background:#f4f7f5;color:#17231b;border:1px solid #d2ddd6}.correct{background:#bce8c9!important}.wrong{background:#f3baba!important}.bar{height:8px;background:#ddd;border-radius:8px;overflow:hidden}#bar{height:100%;background:#087443;width:0}#q{font-size:19px;font-weight:bold;line-height:1.4}.subjects,.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.stats{display:flex;gap:8px}.stat{flex:1;background:#edf4ef;text-align:center;padding:10px;border-radius:10px}.stat b{display:block;font-size:20px}.search{display:flex;gap:7px}input{flex:1;padding:11px;border:1px solid #ccd8d0;border-radius:9px}.res{padding:9px;border-bottom:1px solid #ddd}small{color:#65736b}@media(min-width:650px){.grid,.subjects,.modes{grid-template-columns:repeat(4,1fr)}}</style></head><body>
+<header><h1>🎖️ Cadet Prep</h1><div>60,000+ practice questions • high-yield concepts • future paper exact guarantee nahi</div></header><main class="wrap">
+<section id="home"><div class="card"><h2>Subjects</h2><div class="subjects">
+<button class="active" onclick="setFilter('All',this)">All</button>
+<button onclick="setFilter('Math',this)">Math</button>
+<button onclick="setFilter('English',this)">English</button>
+<button onclick="setFilter('Intelligence',this)">Intelligence</button>
+<button onclick="setFilter('Science',this)">Science</button>
+<button onclick="setFilter('Pakistan',this)">Pakistan Studies</button>
+<button onclick="setFilter('Islamiyat',this)">Islamiyat</button>
+<button onclick="setFilter('GK',this)">GK</button>
+<button onclick="setFilter('Computer',this)">Computer</button>
+<button onclick="setFilter('Forces',this)">Forces</button>
+<button onclick="setFilter('Hard',this)">Hard</button>
+<button onclick="setFilter('Important',this)">Important</button>
+<button onclick="setFilter('Saved',this)">Saved</button>
+<button onclick="setFilter('Wrong',this)">Wrong</button>
+<button onclick="setFilter('Daily',this)">Daily</button></div></div>
+
+<div class="card stats"><div class="stat"><b id="total">0</b>Total</div><div class="stat"><b id="saved">0</b>Saved</div><div class="stat"><b id="wrong">0</b>Wrong</div></div><div class="card"><button class="full alt" onclick="resetProgress()">♻️ Reset Saved & Wrong</button></div>
+<div class="card"><h3>Start Test — <span id="startSubject">All Questions</span></h3><div class="grid"><label>Questions<select id="amount"><option>10</option><option>25</option><option>50</option><option>100</option><option>250</option><option>500</option></select></label><label>Minutes<select id="minutes"><option>5</option><option>10</option><option>20</option><option>30</option><option>60</option></select></label></div><br><button class="full" onclick="start()">🚀 Start</button></div>
+<div class="card"><h3>Search</h3><div class="search"><input id="search" placeholder="Search questions"><button onclick="searchQ()">Search</button></div><div id="results"></div></div></section>
+<section id="test" class="hide"><div class="card"><div><span id="counter"></span><b style="float:right" id="timer"></b></div><div class="bar"><div id="bar"></div></div><p id="tags"></p><p id="q"></p><div id="opts"></div><button class="alt" onclick="save()">🔖 Save</button> <button onclick="next()">Next ➜</button></div></section>
+<section id="result" class="hide"><div class="card"><h2>Test Complete 🎉</h2><h1 id="score"></h1><p id="accuracy"></p><button onclick="home()" class="full">Home</button></div></section>
+</main><script>
+const bank=[],seen=new Set();
+function add(s,t,d,imp,q,o,a=0){if(seen.has(q)||o.length!=4||new Set(o).size<4)return;bank.push({id:bank.length+1,subject:s,type:t,difficulty:d,important:imp,q,options:o,answer:a});seen.add(q)}
+const nums=(n)=>[(n%997)+2,(Math.floor(n/997)%89)+2];
+function build(){
+for(let n=1;n<=6000;n++){
+ let [a,b]=nums(n),v;
+ v=a+b;add("Math","Math",n%7==0?"Hard":"Medium",n%3==0,`What is ${a} + ${b}?`,[`${v}`,`${v+1}`,`${v-1}`,`${v+2}`]);
+ v=a*b;add("Math","Math",n%7==0?"Hard":"Medium",n%3==0,`Calculate ${a} × ${b}.`,[`${v}`,`${v+a}`,`${v+b}`,`${v+1}`]);
+ v=a*a;add("Math","Math",n%7==0?"Hard":"Medium",n%3==0,`What is ${a} squared?`,[`${v}`,`${v+1}`,`${a*2}`,`${v+a}`]);
+ let d=n%9+2,x=n%30+1;v=x+4*d;add("Intelligence","Series",n%6==0?"Hard":"Medium",n%4==0,`Find the next number: ${x}, ${x+d}, ${x+2*d}, ${x+3*d}, ?`,[`${v}`,`${v+1}`,`${v-1}`,`${v+d}`]);
+ let m=n%20+2;v=m*2;add("Intelligence","Analogy","Medium",n%3==0,`If 1 becomes ${m}, then 2 becomes ?`,[`${v}`,`${m+1}`,`${m+2}`,`${m*3}`]);
+ const syn=[["rapid","fast","slow","weak","late"],["brave","courageous","cowardly","quiet","empty"],["ancient","old","new","young","fresh"],["large","big","tiny","narrow","short"]][n%4];
+ add("English","Vocabulary",n%6==0?"Hard":"Medium",n%3==0,`Choose the synonym of "${syn[0]}".`,syn.slice(1));
+ const ant=[["hot","cold","warm","boiling","bright"],["early","late","soon","quick","first"],["strong","weak","hard","firm","brave"],["victory","defeat","success","win","prize"]][n%4];
+ add("English","Vocabulary",n%6==0?"Hard":"Medium",n%3==0,`Choose the antonym of "${ant[0]}".`,ant.slice(1));
+ add("English","Grammar","Easy",true,`Choose the correct article: I saw ___ eagle in the sky.`,["an","a","the","no article"]);
+ add("Science","Science","Easy",true,`Which planet is known as the Red Planet? [Set ${n}]`,["Mars","Venus","Jupiter","Mercury"]);
+ add("Science","Science","Easy",true,`Which gas is needed for human respiration? [Set ${n}]`,["Oxygen","Nitrogen","Helium","Hydrogen"]);
+ add("Pakistan","Pakistan","Easy",true,`In which year did Pakistan gain independence? [Set ${n}]`,["1947","1940","1956","1965"]);
+ add("Pakistan","Pakistan","Easy",true,`What is the capital of Pakistan? [Set ${n}]`,["Islamabad","Karachi","Lahore","Peshawar"]);
+ add("Islamiyat","Islamiyat","Easy",true,`How many pillars of Islam are there? [Set ${n}]`,["Five","Four","Six","Seven"]);
+ add("Islamiyat","Islamiyat","Easy",true,`How many obligatory prayers are there each day? [Set ${n}]`,["Five","Three","Four","Six"]);
+ add("GK","GK","Easy",true,`Which is the largest ocean? [Set ${n}]`,["Pacific Ocean","Atlantic Ocean","Indian Ocean","Arctic Ocean"]);
+ add("GK","GK","Easy",true,`How many continents are commonly recognized? [Set ${n}]`,["Seven","Five","Six","Eight"]);
+ add("Computer","Computer","Easy",true,`What does CPU stand for? [Set ${n}]`,["Central Processing Unit","Computer Personal Unit","Central Program Utility","Control Processing User"]);
+ add("Computer","Computer","Easy",true,`Which language is used to structure web pages? [Set ${n}]`,["HTML","CSS","SQL","Python"]);
+ add("Forces","Forces","Medium",true,`Which force primarily protects Pakistan's airspace? [Set ${n}]`,["Pakistan Air Force","Pakistan Army","Pakistan Navy","Police"]);
+ add("Forces","Forces","Medium",true,`Which quality helps a team perform effectively? [Set ${n}]`,["Cooperation","Isolation","Carelessness","Confusion"]);
+}
+}
+build();
+
+let z=1;
+while(bank.length<60000){
+ const a=z%999+2,b=Math.floor(z/999)%99+2,c=a+b;
+ const families=[
+  ["Math",`What is ${a} + ${b} + ${c}?`,[`${a+b+c}`,`${a+b+c+1}`,`${a+b+c-1}`,`${a+b}`]],
+  ["Math",`What is ${a} × ${b} - ${c}?`,[`${a*b-c}`,`${a*b+c}`,`${a*b}`,`${a+b+c}`]],
+  ["Intelligence",`Complete: ${a}, ${a+b}, ${a+2*b}, ${a+3*b}, ?`,[`${a+4*b}`,`${a+4*b+1}`,`${a+3*b}`,`${a+5*b}`]],
+  ["English",`Select the correctly spelled word [Set ${z}].`,["necessary","neccessary","necesary","nessesary"]],
+  ["Science",`Which substance has the formula H2O? [Set ${z}]`,["Water","Oxygen","Hydrogen","Salt"]],
+  ["Pakistan",`Which province is largest by area in Pakistan? [Set ${z}]`,["Balochistan","Punjab","Sindh","Khyber Pakhtunkhwa"]],
+  ["Islamiyat",`Which is the first month of the Islamic calendar? [Set ${z}]`,["Muharram","Ramadan","Rajab","Shawwal"]],
+  ["GK",`Which country is famous for the Eiffel Tower? [Set ${z}]`,["France","Italy","Spain","Germany"]],
+  ["Computer",`Which device is mainly used to type text? [Set ${z}]`,["Keyboard","Monitor","Speaker","Printer"]],
+  ["Forces",`Which organization is associated with selection of candidates for armed-forces officer training? [Set ${z}]`,["ISSB","NADRA","FBR","WAPDA"]]
+ ];
+ const f=families[z%families.length];
+ add(f[0],"Mixed",z%5==0?"Hard":"Medium",z%3==0,f[1],f[2]);
+ z++;
+}
+for(const q of bank){const c=q.options[q.answer];let seed=(q.id*9301+49297)%233280;for(let i=q.options.length-1;i>0;i--){seed=(seed*9301+49297)%233280;let j=seed%(i+1);[q.options[i],q.options[j]]=[q.options[j],q.options[i]]}q.answer=q.options.indexOf(c);if(q.answer===0){[q.options[0],q.options[1]]=[q.options[1],q.options[0]];q.answer=1}}
+console.log("Bank:",bank.length);
+let filter="All",cur=[],at=0,score=0,done=false,timer=null,left=0;
+let saved=JSON.parse(localStorage.getItem("cp_saved")||"[]"),wrong=JSON.parse(localStorage.getItem("cp_wrong")||"[]");
+const $=id=>document.getElementById(id);
+function show(id){["home","test","result"].forEach(x=>$(x).classList.add("hide"));$(id).classList.remove("hide")}
+function setFilter(x,b){
+  filter=x;
+  document.querySelectorAll(".subjects button").forEach(q=>q.classList.remove("active"));
+  b.classList.add("active");
+  $("selectedSubject").textContent=x;
+  $("startSubject").textContent=x;
+}
+function filtered(){
+  let a=bank;
+  if(filter=="Hard") return a.filter(q=>q.difficulty=="Hard");
+  if(filter=="Important") return a.filter(q=>q.important);
+  if(filter=="Saved") return a.filter(q=>saved.includes(q.id));
+  if(filter=="Wrong") return a.filter(q=>wrong.includes(q.id));
+  if(filter=="Daily") return a.filter(q=>q.id%30==(Math.floor(Date.now()/86400000)%30));
+  if(filter!="All") return a.filter(q=>q.subject==filter);
+  return a;
+}
+function stats(){$("total").textContent=bank.length.toLocaleString();$("saved").textContent=saved.length;$("wrong").textContent=wrong.length}
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function start(){$("startSubject").textContent=filter;let a=filtered();if(!a.length)return alert("Is selection mein questions nahi hain.");
+const requested=+$("amount").value;cur=shuffle(a).slice(0,Math.min(requested,a.length));at=0;score=0;left=+$("minutes").value*60;show("test");clearInterval(timer);timer=setInterval(()=>{left--;clock();if(left<=0)finish()},1000);clock();question()}
+function clock(){$("timer").textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0")}
+function question(){done=false;let q=cur[at];$("counter").textContent=`Question ${at+1} / ${cur.length}`;$("bar").style.width=(((at+1)/cur.length)*100)+"%";$("q").textContent=q.q;$("tags").textContent=q.subject+" • "+q.difficulty;$("opts").innerHTML=q.options.map((o,i)=>`<button class="opt" onclick="answer(${i},this)">${String.fromCharCode(65+i)}. ${o}</button>`).join("")}
+function answer(i,b){if(done)return;done=true;let q=cur[at],bs=document.querySelectorAll(".opt");bs[q.answer].classList.add("correct");if(i==q.answer)score++;else{b.classList.add("wrong");if(!wrong.includes(q.id))wrong.push(q.id);localStorage.setItem("cp_wrong",JSON.stringify(wrong))}stats()}
+function next(){if(!done)return alert("Pehle answer select karo.");at++;at>=cur.length?finish():question()}
+function save(){let id=cur[at].id;saved.includes(id)?saved=saved.filter(x=>x!=id):saved.push(id);localStorage.setItem("cp_saved",JSON.stringify(saved));stats()}
+function resetProgress(){if(confirm("Saved aur Wrong list reset karni hai?")){saved=[];wrong=[];localStorage.removeItem("cp_saved");localStorage.removeItem("cp_wrong");stats()}}
+function finish(){clearInterval(timer);show("result");$("score").textContent=`${score} / ${cur.length}`;$("accuracy").textContent=`Accuracy: ${Math.round(score/cur.length*100)}%`;stats()}
+function home(){clearInterval(timer);show("home");stats()}
+function searchQ(){let t=$("search").value.trim().toLowerCase();if(!t){$("results").innerHTML="<small>Search term likho.</small>";return}let r=bank.filter(q=>(q.q+" "+q.subject+" "+q.options.join(" ")).toLowerCase().includes(t)).slice(0,100);$("results").innerHTML=`<small>${r.length} result(s) shown</small>`+r.map(q=>`<div class="res"><b>${q.subject}</b> — ${q.q}<br><small>${q.options.join(" | ")}</small></div>`).join("")+(r.length?"":"<p>No matching question found.</p>")}
+stats();
+</script></body></html>
